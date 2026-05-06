@@ -527,8 +527,8 @@ body.bar-on .hero{padding-top:34px;}
   <div class="avap-track reveal" id="avapTrack">
     <div class="avap-item" data-idx="0">
       <div class="avap-img-wrap">
-        <div class="avap-before" style="background-image:url('assets/AV4.PNG')"></div>
-        <div class="avap-after" style="background-image:url('assets/AP4.PNG')"></div>
+        <div class="avap-before" style="background-image:url('assets/AP4.PNG')"></div>
+        <div class="avap-after" style="background-image:url('assets/AV4.PNG')"></div>
         <div class="avap-divider"></div>
         <div class="avap-labels">
           <span class="avap-label b">Avant</span>
@@ -538,8 +538,8 @@ body.bar-on .hero{padding-top:34px;}
     </div>
     <div class="avap-item" data-idx="1">
       <div class="avap-img-wrap">
-        <div class="avap-before" style="background-image:url('assets/AV1.PNG')"></div>
-        <div class="avap-after" style="background-image:url('assets/AP1.PNG')"></div>
+        <div class="avap-before" style="background-image:url('assets/AP1.PNG')"></div>
+        <div class="avap-after" style="background-image:url('assets/AV1.PNG')"></div>
         <div class="avap-divider"></div>
         <div class="avap-labels">
           <span class="avap-label b">Avant</span>
@@ -549,8 +549,8 @@ body.bar-on .hero{padding-top:34px;}
     </div>
     <div class="avap-item" data-idx="2">
       <div class="avap-img-wrap">
-        <div class="avap-before" style="background-image:url('assets/AV3.PNG')"></div>
-        <div class="avap-after" style="background-image:url('assets/AP3.PNG')"></div>
+        <div class="avap-before" style="background-image:url('assets/AP3.PNG')"></div>
+        <div class="avap-after" style="background-image:url('assets/AV3.PNG')"></div>
         <div class="avap-divider"></div>
         <div class="avap-labels">
           <span class="avap-label b">Avant</span>
@@ -727,15 +727,7 @@ Intervention rapide dans votre secteur • Déplacement offert
   <div class="s-label reveal">R&#233;servation</div>
   <h2 class="s-title reveal">Prenez rendez-vous<br>d&#232;s aujourd&#8217;hui.</h2>
   <div class="contact-wrap">
-    <form id="contactForm" name="contact" method="POST" 
-data-netlify="true" netlify-honeypot="bot-field" 
-class="contact-form reveal">
-
-  <input type="hidden" name="form-name" value="contact">
-
-  <p hidden>
-    <input name="bot-field">
-  </p>
+    <form id="contactForm" action="https://formspree.io/f/xwvybzrq" method="POST" class="contact-form reveal">
 
   <div class="f-row">
     <div class="f-g">
@@ -833,34 +825,40 @@ document.querySelectorAll('.reveal,.reveal-left').forEach(el=>obs.observe(el));
 document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{const h=a.getAttribute('href');if(h==='#')return;e.preventDefault();const t=document.querySelector(h);if(t)t.scrollIntoView({behavior:'smooth'});});});
 document.getElementById('contactForm').addEventListener('submit', function(e) {
   e.preventDefault();
-
   const form = this;
   const btn = document.getElementById('sub-btn');
-
-  btn.textContent = 'Envoi...';
+  btn.textContent = 'Envoi en cours...';
   btn.disabled = true;
 
-  const data = new FormData(form);
-
-  fetch("/", {
-    method: "POST",
-    body: data
+  fetch('https://formspree.io/f/xwvybzrq', {
+    method: 'POST',
+    body: new FormData(form),
+    headers: { 'Accept': 'application/json' }
   })
-  .then(() => {
-    document.getElementById('toast').classList.add('show');
-
-    btn.textContent = 'Envoyé ✓';
-    form.reset();
-
-    setTimeout(() => {
-      document.getElementById('toast').classList.remove('show');
-      btn.textContent = 'Envoyer ma demande';
-      btn.disabled = false;
-    }, 3000);
+  .then(response => {
+    if (response.ok) {
+      document.getElementById('toast').classList.add('show');
+      btn.textContent = 'Demande envoyée ✓';
+      btn.style.background = '#1a7a3a';
+      form.reset();
+      setTimeout(() => {
+        document.getElementById('toast').classList.remove('show');
+        btn.textContent = 'Envoyer ma demande';
+        btn.style.background = '';
+        btn.disabled = false;
+      }, 4000);
+    } else {
+      throw new Error('Erreur réseau');
+    }
   })
   .catch(() => {
-    btn.textContent = 'Erreur...';
-    btn.disabled = false;
+    btn.textContent = '❌ Erreur, réessayez';
+    btn.style.background = '#7a1a1a';
+    setTimeout(() => {
+      btn.textContent = 'Envoyer ma demande';
+      btn.style.background = '';
+      btn.disabled = false;
+    }, 3000);
   });
 });
 // AVANT/APRES slider
